@@ -1,0 +1,104 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# =========================
+# Virtual Environment
+# =========================
+venv/
+env/
+ENV/
+.venv/
+
+# =========================
+# macOS
+# =========================
+.DS_Store
+
+# =========================
+# IDEs
+# =========================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# =========================
+# Environment Variables
+# =========================
+.env
+.env.*
+
+# =========================
+# Logs
+# =========================
+logs/
+*.log
+
+# =========================
+# Model Checkpoints
+# =========================
+saved_models/
+checkpoints/
+*.h5
+*.hdf5
+*.ckpt
+*.pth
+*.pt
+*.onnx
+*.pkl
+*.joblib
+*.sav
+
+# =========================
+# Dataset Files
+# (Keep folder structure but ignore contents)
+# =========================
+data/*
+!data/.gitkeep
+!data/README.md
+
+# =========================
+# Evaluation Outputs
+# =========================
+evaluation/results/
+evaluation/plots/
+evaluation/reports/
+
+# =========================
+# Jupyter
+# =========================
+.ipynb_checkpoints/
+
+# =========================
+# Coverage & Testing
+# =========================
+.pytest_cache/
+.coverage
+htmlcov/
+.cache/
+
+# =========================
+# Build Files
+# =========================
+build/
+dist/
+*.egg-info/
+
+# =========================
+# Temporary Files
+# =========================
+*.tmp
+*.temp
+*.bak
+
+# =========================
+# OS Files
+# =========================
+Thumbs.db
+Desktop.ini

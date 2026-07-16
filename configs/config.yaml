@@ -1,0 +1,98 @@
+# =============================================================================
+# Project Configuration
+# Adaptive Trust-Based Ensemble Defense Framework for Adversarial Financial
+# Fraud Detection Using Hybrid Machine Learning Models
+# =============================================================================
+
+project:
+  name: "adaptive-trust-ensemble-fraud-defense"
+  random_seed: 42
+
+# -----------------------------------------------------------------------------
+# Filesystem paths (relative to project root)
+# -----------------------------------------------------------------------------
+paths:
+  raw_data_dir: "data/raw"
+  processed_data_dir: "data/processed"
+  saved_models_dir: "saved_models"
+  logs_dir: "logs"
+  metrics_dir: "evaluation/metrics"
+  plots_dir: "evaluation/plots"
+
+# -----------------------------------------------------------------------------
+# Active dataset selector. Switch this key to point the pipeline at a
+# different block below (ieee_cis / paysim / ulb) without touching any code.
+# -----------------------------------------------------------------------------
+active_dataset: "ieee_cis"
+
+datasets:
+  ieee_cis:
+    loader: "IEEECISLoader"
+    transaction_file: "train_transaction.csv"
+    identity_file: "train_identity.csv"
+    merge_key: "TransactionID"
+    target_column: "isFraud"
+    drop_columns: ["TransactionID"]   # identifier columns, not predictive features
+
+  # Placeholders — implemented later via the same BaseDatasetLoader interface.
+  paysim:
+    loader: "PaySimLoader"
+    transaction_file: "paysim.csv"
+    merge_key: null
+    target_column: "isFraud"
+    drop_columns: ["nameOrig", "nameDest"]
+
+  ulb:
+    loader: "ULBLoader"
+    transaction_file: "creditcard.csv"
+    merge_key: null
+    target_column: "Class"
+    drop_columns: []
+
+# -----------------------------------------------------------------------------
+# Preprocessing configuration
+# -----------------------------------------------------------------------------
+preprocessing:
+  test_size: 0.2
+  validation_size: 0.1   # fraction of the TRAINING split, carved out pre-SMOTE
+  stratify: true
+
+  missing_values:
+    numeric_strategy: "median"          # median | mean | constant
+    numeric_fill_value: 0
+    categorical_strategy: "constant"    # constant | most_frequent
+    categorical_fill_value: "missing"
+    drop_columns_missing_threshold: 0.95  # drop columns with >95% missing
+
+  encoding:
+    method: "ordinal"                   # ordinal encoding, tree-model friendly
+    unknown_value: -1
+
+  scaling:
+    apply: true
+    method: "standard"                  # standard | minmax
+
+  imbalance:
+    method: "smote"
+    apply: true
+    sampling_strategy: 0.3              # minority:majority ratio after resampling
+    k_neighbors: 5
+
+# -----------------------------------------------------------------------------
+# XGBoost hyperparameters
+# -----------------------------------------------------------------------------
+xgboost:
+  n_estimators: 600
+  max_depth: 6
+  learning_rate: 0.05
+  subsample: 0.8
+  colsample_bytree: 0.8
+  gamma: 0.1
+  min_child_weight: 1
+  reg_alpha: 0.1
+  reg_lambda: 1.0
+  eval_metric: "aucpr"
+  tree_method: "hist"
+  early_stopping_rounds: 50
+  n_jobs: -1
+  objective: "binary:logistic"
