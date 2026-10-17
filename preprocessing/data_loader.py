@@ -120,28 +120,68 @@ class IEEECISLoader(BaseDatasetLoader):
 
 class PaySimLoader(BaseDatasetLoader):
     """
-    Placeholder for future PaySim synthetic dataset support.
-    Implements the same BaseDatasetLoader interface so the rest of the
-    pipeline requires zero changes once this is built out.
+    Loader for the PaySim synthetic dataset.
     """
 
     def load(self) -> pd.DataFrame:
-        raise NotImplementedError(
-            "PaySimLoader is not implemented in this module yet. "
-            "This is a scoped placeholder for a future project phase."
-        )
+        transaction_path = self.raw_data_dir / self.dataset_config["transaction_file"]
+        target_column = self.dataset_config["target_column"]
+        drop_columns = self.dataset_config.get("drop_columns", [])
+
+        if not transaction_path.exists():
+            raise FileNotFoundError(
+                f"PaySim file not found at {transaction_path}. "
+                f"Download it and place it under data/raw/."
+            )
+
+        logger.info(f"Loading PaySim data from {transaction_path}")
+        df = pd.read_csv(transaction_path)
+        logger.info(f"PaySim data shape: {df.shape}")
+
+        if target_column not in df.columns:
+            raise KeyError(f"Expected target column '{target_column}' not found.")
+
+        df = df.rename(columns={target_column: "target"})
+
+        existing_drop_columns = [c for c in drop_columns if c in df.columns]
+        if existing_drop_columns:
+            logger.info(f"Dropping identifier columns: {existing_drop_columns}")
+            df = df.drop(columns=existing_drop_columns)
+
+        return df
 
 
 class ULBLoader(BaseDatasetLoader):
     """
-    Placeholder for future ULB Credit Card Fraud dataset support.
+    Loader for the ULB Credit Card Fraud dataset.
     """
 
     def load(self) -> pd.DataFrame:
-        raise NotImplementedError(
-            "ULBLoader is not implemented in this module yet. "
-            "This is a scoped placeholder for a future project phase."
-        )
+        transaction_path = self.raw_data_dir / self.dataset_config["transaction_file"]
+        target_column = self.dataset_config["target_column"]
+        drop_columns = self.dataset_config.get("drop_columns", [])
+
+        if not transaction_path.exists():
+            raise FileNotFoundError(
+                f"ULB file not found at {transaction_path}. "
+                f"Download it and place it under data/raw/."
+            )
+
+        logger.info(f"Loading ULB data from {transaction_path}")
+        df = pd.read_csv(transaction_path)
+        logger.info(f"ULB data shape: {df.shape}")
+
+        if target_column not in df.columns:
+            raise KeyError(f"Expected target column '{target_column}' not found.")
+
+        df = df.rename(columns={target_column: "target"})
+
+        existing_drop_columns = [c for c in drop_columns if c in df.columns]
+        if existing_drop_columns:
+            logger.info(f"Dropping identifier columns: {existing_drop_columns}")
+            df = df.drop(columns=existing_drop_columns)
+
+        return df
 
 
 # Registry mapping config-declared loader names to their classes, used by
